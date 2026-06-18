@@ -25,6 +25,20 @@ train/data/labels/
 *.mlpackage
 *.mlmodel
 *.coreml
+# 本地权重存放目录
+save_weights/
+
+# 模型评估输出结果（本地消融实验，不上传仓库）
+eval_result_all_epoch*/
+eval_result_out*/
+
+# 训练日志、临时输出文本
+logs/
+record_mAP.txt
+*.log
+*.txt
+# 例外：仅docs目录下的展示用txt保留
+!docs/*.txt
 
 # macOS
 .DS_Store
@@ -45,3 +59,7 @@ train/data/labels/
 xcuserdata/
 DerivedData/
 *.xcuserstate
+
+# vim临时缓存文件
+*.swp
+*.swo
