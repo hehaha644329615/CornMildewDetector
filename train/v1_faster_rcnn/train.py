@@ -1,15 +1,23 @@
 import os
 import datetime
-
 import torch
+from torchvision import transforms
+import sys
 
-import transforms
-from network_files import FasterRCNN, FastRCNNPredictor
-from backbone import resnet50_fpn_backbone
-from my_dataset import VOCDataSet
-from train_utils import GroupedBatchSampler, create_aspect_ratio_groups
-from train_utils import train_eval_utils as utils
+# 当前脚本目录
+cur_path = os.path.dirname(os.path.abspath(__file__)) # /CornMildewDetector/train/v1_faster_rcnn
+train_root = os.path.join(cur_path, "..") # -> /CornMildewDetector/train
+# 把train加入系统路径，就能直接 import common_3cls
+sys.path.append(train_root) 
 
+# 导入子文件夹的包
+import config as cfg
+from common_3cls.FasterRCNN_models.network_files import FasterRCNN, FastRCNNPredictor
+from common_3cls.FasterRCNN_models.backbone import resnet50_fpn_backbone
+from common_3cls.data.VOC_dataset import VOCDataSet
+from common_3cls.data import transforms
+from common_3cls.FasterRCNN_utils.train_utils import GroupedBatchSampler, create_aspect_ratio_groups
+from common_3cls.FasterRCNN_utils.train_utils import train_eval_utils as utils
 
 def create_model(num_classes, load_pretrain_weights=True):
     # 注意，这里的backbone默认使用的是FrozenBatchNorm2d，即不会去更新bn参数
@@ -25,7 +33,8 @@ def create_model(num_classes, load_pretrain_weights=True):
     if load_pretrain_weights:
         # 载入预训练模型权重
         # https://download.pytorch.org/models/fasterrcnn_resnet50_fpn_coco-258fb6c6.pth
-        weights_dict = torch.load("fasterrcnn_resnet50_fpn_coco.pth", map_location='cpu')
+        pretrain_weight_path = os.path.join(train_root, "common_3cls", "fasterrcnn_resnet50_fpn_coco.pth")
+        weights_dict = torch.load(pretrain_weight_path, map_location='cpu')
         missing_keys, unexpected_keys = model.load_state_dict(weights_dict, strict=False)
         if len(missing_keys) != 0 or len(unexpected_keys) != 0:
             print("missing_keys: ", missing_keys)
@@ -41,7 +50,6 @@ def create_model(num_classes, load_pretrain_weights=True):
 
 def main(args):
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
-    print("Using {} device training.".format(device.type))
 
     # 用来保存coco_info的文件
     results_file = "results{}.txt".format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
@@ -52,14 +60,20 @@ def main(args):
         "val": transforms.Compose([transforms.ToTensor()])
     }
 
-    VOC_root = args.data_path
-    # check voc root
-    if os.path.exists(os.path.join(VOC_root, "VOCdevkit")) is False:
-        raise FileNotFoundError("VOCdevkit does not in path:'{}'.".format(VOC_root))
+    VOC_root = cfg.VOC_ROOT
+
+    # 新增三行打印，看核心子文件夹
+    anno_path = os.path.join(VOC_root, "Annotations")
+    img_path = os.path.join(VOC_root, "JPEGImages", "JPEGImages")
+
+    set_path = os.path.join(VOC_root, "ImageSets")
+
+    # 手动拼接dataset内部要读取的完整txt路径
+    target_txt = os.path.join(VOC_root, "ImageSets", "Main", "train.txt")
 
     # load train data set
-    # VOCdevkit -> VOC2012 -> ImageSets -> Main -> train.txt
-    train_dataset = VOCDataSet(VOC_root, "2012", data_transform["train"], "train.txt")
+    train_dataset = VOCDataSet(VOC_root, "2012", data_transform["train"], "train")
+
     train_sampler = None
 
     # 是否按图片相似高宽比采样图片组成batch
@@ -93,7 +107,7 @@ def main(args):
 
     # load validation data set
     # VOCdevkit -> VOC2012 -> ImageSets -> Main -> val.txt
-    val_dataset = VOCDataSet(VOC_root, "2012", data_transform["val"], "val.txt")
+    val_dataset = VOCDataSet(VOC_root, "2012", data_transform["val"], "val")
     val_data_set_loader = torch.utils.data.DataLoader(val_dataset,
                                                       batch_size=1,
                                                       shuffle=False,
@@ -102,7 +116,7 @@ def main(args):
                                                       collate_fn=val_dataset.collate_fn)
 
     # create model num_classes equal background + 20 classes
-    model = create_model(num_classes=args.num_classes + 1)
+    model = create_model(num_classes=cfg.NUM_CLASSES + 1)
     # print(model)
 
     model.to(device)
@@ -110,16 +124,16 @@ def main(args):
     # define optimizer
     params = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.SGD(params,
-                                lr=args.lr,
-                                momentum=args.momentum,
-                                weight_decay=args.weight_decay)
+                                lr=cfg.LEARNING_RATE,
+                                momentum=cfg.MOMENTUM,
+                                weight_decay=cfg.WEIGHT_DECAY)
 
     scaler = torch.cuda.amp.GradScaler() if args.amp else None
 
     # learning rate scheduler
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
-                                                   step_size=3,
-                                                   gamma=0.33)
+                                                   step_size=cfg.STEP_SIZE,
+                                                   gamma=cfg.STEP_LR_GAMMA)
 
     # 如果指定了上次训练保存的权重文件地址，则接着上次结果接着训练
     if args.resume != "":
@@ -172,12 +186,12 @@ def main(args):
 
     # plot loss and lr curve
     if len(train_loss) != 0 and len(learning_rate) != 0:
-        from plot_curve import plot_loss_and_lr
+        from common_3cls.utils.plot_curve import plot_loss_and_lr
         plot_loss_and_lr(train_loss, learning_rate)
 
     # plot mAP curve
     if len(val_map) != 0:
-        from plot_curve import plot_map
+        from common_3cls.utils.plot_curve import plot_map
         plot_map(val_map)
 
 
@@ -224,7 +238,7 @@ if __name__ == "__main__":
     print(args)
 
     # 检查保存权重文件夹是否存在，不存在则创建
-    if not os.path.exists(args.output_dir):
-        os.makedirs(args.output_dir)
+    if not os.path.exists(cfg.SAVE_WEIGHT_DIR):
+        os.makedirs(cfg.SAVE_WEIGHT_DIR)
 
     main(args)

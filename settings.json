@@ -1,0 +1,19 @@
+{
+  "python.analysis.extraPaths": [
+    "./train/common_3cls",
+    "./train/common_3cls/models",
+    "./train/common_3cls/models/backbone",
+    "./train/common_3cls/models/network_files",
+    "./train/common_3cls/data",
+    "./train/common_3cls/utils",
+    "./train/common_3cls/utils/train_utils",
+
+    "./train/common_2cls",
+    "./train/common_2cls/models",
+    "./train/common_2cls/models/backbone",
+    "./train/common_2cls/models/network_files",
+    "./train/common_2cls/data",
+    "./train/common_2cls/utils",
+    "./train/common_2cls/utils/train_utils"
+  ]
+}
