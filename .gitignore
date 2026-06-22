@@ -63,3 +63,4 @@ DerivedData/
 # vim临时缓存文件
 *.swp
 *.swo
+*tempCodeRunnerFile*
