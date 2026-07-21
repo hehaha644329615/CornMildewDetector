@@ -1,6 +1,54 @@
+# ========== 模型文件（太大，不上传） ==========
+*.pt
 *.pth
 *.onnx
 *.mlpackage
+*.mlmodelc
+*.mlmodel
+*.h5
+*.pb
+*.tflite
+
+# ========== 数据集（图片太多） ==========
+*.jpg
+*.jpeg
+*.png
+*.JPG
+*.JPEG
+*.PNG
+*.bmp
+*.tif
+
+# ========== Python 相关 ==========
 __pycache__/
 *.pyc
+*.pyo
+.venv/
+venv/
+env/
+dist/
+build/
+*.egg-info/
+
+# ========== IDE ==========
+.idea/
+.vscode/
+*.swp
+*.swo
 .DS_Store
+
+# ========== 训练日志 ==========
+runs/
+wandb/
+logs/
+*.log
+
+# ========== iOS 相关 ==========
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcworkspace/xcuserdata/
+Pods/
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
