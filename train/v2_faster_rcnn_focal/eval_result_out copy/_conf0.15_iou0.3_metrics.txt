@@ -1,0 +1,5 @@
+==== Epoch 14 评价指标 (CONF_THRESH = 0.15, IOU_MATCH_THRESH = 0.3) ====
+
+健康 | Precision:0.743 | Recall:0.636 | F1:0.685
+轻度霉变 | Precision:0.591 | Recall:0.072 | F1:0.128
+重度霉变 | Precision:0.861 | Recall:0.592 | F1:0.702
