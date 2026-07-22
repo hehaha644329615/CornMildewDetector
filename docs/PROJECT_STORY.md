@@ -111,7 +111,7 @@
 
 **训练成果各项指标**：
 
-| Curves | Matrix |
+| 训练 | 指标 |
 |:---|:---|
 | ![Curves](images/v6_final_production-5/BoxPR_curve.png) | ![Matrix](images/v6_final_production-5/BoxF1_curve.png) | 
 | ![Curves](images/v6_final_production-5/BoxP_curve.png) | ![Matrix](images/v6_final_production-5/BoxR_curve.png) |
