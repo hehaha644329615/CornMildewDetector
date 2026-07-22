@@ -111,8 +111,9 @@
 
 **训练成果各项指标**：
 
+| Curves | Matrix | Labels |
 |:---|:---|:---|
-| ![alt text](images/v6_final_production-5/BoxPR_curve.png) | ![alt text](images/v6_final_production-5/BoxF1_curve.png) | ![alt text](images/v6_final_production-5/BoxP_curve.png) |
+| ![Curves](images/v6_final_production-5/BoxPR_curve.png) | ![Curves](images/v6_final_production-5/BoxF1_curve.png) | ![Curves](images/v6_final_production-5/BoxP_curve.png) |
 
 **最终效果**：
 
