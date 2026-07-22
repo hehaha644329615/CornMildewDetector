@@ -104,10 +104,15 @@
 ### v6：最终上线版 — 数据增强 + 空背景负样本 + 量化部署
 
 **关键改进**：
-1. **数据增强**：9 张原图通过旋转、翻转、亮度调整扩至 100 张
+1. **数据增强**：30 张原图通过旋转、翻转、亮度调整扩至 300 张
 2. **空背景负样本**：加入空盒子照片，模型学会"什么是背景"
 3. **INT8 量化**：模型从 12MB 压缩到 3.8MB
 4. **CoreML 部署**：导出 .mlpackage 集成到 iOS App
+
+**训练成果各项指标**：
+
+|:---|:---|:---|
+| ![alt text](images/v6_final_production-5/BoxPR_curve.png) | ![alt text](images/v6_final_production-5/BoxF1_curve.png) | ![alt text](images/v6_final_production-5/BoxP_curve.png) |
 
 **最终效果**：
 
@@ -122,7 +127,7 @@
 | 推理速度 | 5 FPS | **22 FPS** |
 
 
-| ![alt text](images/v6_final_production-5/BoxPR_curve.png) |
+ 
 
 
 **混淆矩阵**：
@@ -135,7 +140,7 @@
 - 背景误判率仅 0.4%–0.8%
 - 训练/验证损失高度重合 → 无过拟合
 
-| ![alt text](images/v6_final_production-5/v6_confusion_matrix.png) |
+|  |
 
 
 ## iOS App 功能
