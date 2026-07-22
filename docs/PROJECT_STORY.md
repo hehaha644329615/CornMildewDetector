@@ -83,6 +83,12 @@
 
 **实验结果**：mAP50 从 0.242 微涨到 0.263，漏检率仍高达 82%
 
+| v2实验 | 指标图 |
+|:---|:---|
+| ![alt text](images/v2_image/mAP.jpg) | ![alt text](images/v2_image/matrix.jpg) |
+
+
+
 **核心教训**：改 Loss 只是锦上添花，数据质量才是根本。
 
 
