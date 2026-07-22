@@ -113,7 +113,9 @@
 
 | Curves | Matrix |
 |:---|:---|
-| ![Curves](images/v6_final_production-5/BoxPR_curve.png) | ![Curves](images/v6_final_production-5/BoxF1_curve.png) | ![Curves](images/v6_final_production-5/BoxP_curve.png) |
+| ![Curves](images/v6_final_production-5/BoxPR_curve.png) | ![Matrix](images/v6_final_production-5/BoxF1_curve.png) | 
+| ![Curves](images/v6_final_production-5/BoxP_curve.png) | ![Matrix](images/v6_final_production-5/BoxR_curve.png) |
+| ![Curves](images/v6_final_production-5/v6_confusion_matrix.png) | ![Matrix](images/v6_final_production-5/labels.jpg) |
 
 **最终效果**：
 
