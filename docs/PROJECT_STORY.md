@@ -107,7 +107,7 @@
 
 | v2实验 | 指标图 |
 |:---|:---|
-| ![alt text](images/v2_prodution/mAP.jpg) | ![alt text](images/v2_prodution/matrix.jpg) |
+| ![alt text](images/v2_production/mAP.jpg) | ![alt text](images/v2_production/matrix.jpg) |
 
 **mAP 收敛曲线**：
 mAP 从第 8 个 epoch 开始逐步爬升，到第 14 个 epoch 约 0.26，整体呈现上升趋势但增速放缓，表明模型仍有学习空间，但增益已非常有限。
