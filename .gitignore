@@ -9,6 +9,15 @@
 *.pb
 *.tflite
 
+# ========== 数据集（图片太多） ==========
+*.jpg
+*.jpeg
+*.png
+*.JPG
+*.JPEG
+*.PNG
+*.bmp
+*.tif
 
 # ========== Python 相关 ==========
 __pycache__/
