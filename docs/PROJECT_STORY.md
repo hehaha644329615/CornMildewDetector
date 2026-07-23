@@ -381,7 +381,7 @@ v2 验证了一个关键结论：**轻度霉变与健康玉米的视觉特征高
 
 | v6训练 | 指标 |
 |:---|:---|
-| ![Curves](images/v6_production/BoxPR_curve.png) | ![Matrix](images/v6_final_production-5/BoxF1_curve.png) | 
+| ![Curves](images/v6_production/BoxPR_curve.png) | ![Matrix](images/v6_production/BoxF1_curve.png) | 
 | ![Curves](images/v6_production/BoxP_curve.png) | ![Matrix](images/v6_production/BoxR_curve.png) |
 | ![Curves](images/v6_production/v6_confusion_matrix.png) | ![Matrix](images/v6_production/labels.jpg) |
 
