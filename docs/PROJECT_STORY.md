@@ -24,10 +24,11 @@
 
   <!-- 右侧：APP界面图片 -->
   <div style="flex-shrink: 0;">
-    <img src="images/app界面.jpg" width="350" alt="玉米霉变检测APP首页" style="border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+    <img src="images/app界面.jpg" width="150" alt="玉米霉变检测APP首页" style="border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
   </div>
 
 </div>
+
 | 发霉玉米示意 | 示意 |
 |:---|:---|
 | ![发霉程度示意](images/发霉程度示意图.jpg) | ![玉米组成部分](images/玉米组成部分.png) |
