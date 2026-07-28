@@ -1,51 +1,151 @@
 # 🌽 玉米霉变检测APP系统 — 项目版本演进全记录<br><br>
 
 > 从 Faster RCNN 到 YOLOv8，6 版本迭代的真实踩坑与优化之路<br>
-<div style="display: flex; align-items: flex-start; gap: 30px; margin-bottom: 20px;">
-  
-  <!-- 左侧：项目背景文字 -->
-  <div style="flex: 1;">
-    <h2 style="margin-top: 0;">项目背景</h2>
-    <ul style="padding-left: 20px; line-height: 1.8;">
-      <li style="margin-bottom: 10px;">
-        此项目为本人从数据采集、模型训练、项目发布全程一人负责完成，项目始于2024年8月初完结于2024年10月。<strong>原项目为企业内部项目，涉及业务数据和代码，仓库仅保留可公开的复现版本，完整还原了实验流程、模型训练过程与部署方案。</strong>
-      </li>
-      <li style="margin-bottom: 10px;">
-        饲料加工员提的项目需求很简单：
-        <ul style="margin-top: 5px;">
-          <li>视觉模型能区分出健康和发霉的玉米粒；</li>
-          <li>收购玉米粒时，每次定量抽检，模型能算出发霉玉米粒和整体玉米粒的占比，从而决定收购的价格。要求轻度发霉不高于 <strong>7%</strong>，重度发霉不高于 <strong>2%</strong>，整体霉变率不高于 <strong>5%</strong>。</li>
-          <li>发霉程度的定义：玉米粒可分胚芽端和脂肪端两部分，胚芽亲水，脂肪段憎水，霉变始于胚芽。只有 <strong>胚芽端发霉</strong> 的玉米定义为“轻度发霉”，<strong>脂肪端有发霉</strong> 迹象直接定义为“重度发霉”。</li>
-          <li>加工流程简述：饲料机器会将发霉的玉米粒筛出，丢弃重度发霉玉米粒，并将轻度发霉的玉米粒的胚芽和脂肪剥离，只保留脂肪端。所以一粒轻度发霉的玉米粒损失了一半的重量。<strong>100粒</strong> 的玉米有 <strong>7粒轻度发霉</strong>，剥离胚芽只剩一半的重量就是 <strong>3.5粒</strong>，整个过程相当于丢弃了2粒重度发霉玉米和3.5粒的轻度发霉玉米，共丢弃发霉玉米了 <strong>5.5粒</strong>，<strong>整体霉变率5%</strong>就是这么来的。</li>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 移动端适配必须加 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>玉米霉变检测-项目背景</title>
+    <style>
+        /* 全局基础样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            padding: 20px;
+            line-height: 1.8;
+        }
+        h2 {
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+        ul {
+            padding-left: 22px;
+            margin-bottom: 10px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        strong {
+            font-weight: 600;
+        }
+
+        /* 顶部文字+APP 弹性布局 */
+        .top-wrap {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .top-text {
+            flex: 1;
+        }
+        .top-img-box {
+            flex-shrink: 0;
+        }
+        .app-img {
+            width: 250px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* 霉变双图容器：两张图平分宽度，强制等大 */
+        .img-double-wrap {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .img-col {
+            flex: 1; /* 两列完全均分宽度 */
+        }
+        .img-col img {
+            width: 100%;
+            height: auto;
+            object-fit: contain; /* 不变形，完整显示图片 */
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+
+        /* 行业痛点、约束通用间距 */
+        .block {
+            margin-bottom: 18px;
+        }
+
+        /* 手机端适配：顶部左右布局改成上下 */
+        @media (max-width: 768px) {
+            .top-wrap {
+                flex-direction: column;
+            }
+            .top-img-box {
+                align-self: center;
+            }
+            .img-double-wrap {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 上半部分：左侧文字 + 右侧APP图片 -->
+    <div class="top-wrap">
+        <div class="top-text">
+            <h2>项目背景</h2>
+            <ul>
+                <li>
+                    此项目为本人从数据采集、模型训练、项目发布全程一人负责完成，项目始于2024年8月初完结于2024年10月。<strong>原项目为企业内部项目，涉及业务数据和代码，仓库仅保留可公开的复现版本，完整还原了实验流程、模型训练过程与部署方案。</strong>
+                </li>
+                <li>
+                    饲料加工员提的项目需求很简单：
+                    <ul>
+                        <li>视觉模型能区分出健康和发霉的玉米粒；</li>
+                        <li>收购玉米粒时，每次定量抽检，模型能算出发霉玉米粒和整体玉米粒的占比，从而决定收购的价格。要求轻度发霉不高于 <strong>7%</strong>，重度发霉不高于 <strong>2%</strong>，整体霉变率不高于 <strong>5%</strong>。</li>
+                        <li>发霉程度的定义：玉米粒可分胚芽端和脂肪端两部分，胚芽亲水，脂肪段憎水，霉变始于胚芽。只有 <strong>胚芽端发霉</strong> 的玉米定义为“轻度发霉”，<strong>脂肪端有发霉</strong> 迹象直接定义为“重度发霉”。</li>
+                        <li>加工流程简述：饲料机器会将发霉的玉米粒筛出，丢弃重度发霉玉米粒，并将轻度发霉的玉米粒的胚芽和脂肪剥离，只保留脂肪端。所以一粒轻度发霉的玉米粒损失了一半的重量。<strong>100粒</strong> 的玉米有 <strong>7粒轻度发霉</strong>，剥离胚芽只剩一半的重量就是 <strong>3.5粒</strong>，整个过程相当于丢弃了2粒重度发霉玉米和3.5粒的轻度发霉玉米，共丢弃发霉玉米了 <strong>5.5粒</strong>，<strong>整体霉变率5%</strong>就是这么来的。</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="top-img-box">
+            <img class="app-img" src="images/app界面.jpg" alt="玉米霉变检测APP首页">
+        </div>
+    </div>
+
+    <!-- 替换原来的表格：两张图等宽均分 -->
+    <div class="img-double-wrap">
+        <div class="img-col">
+            <p style="text-align:center; margin-bottom:8px;">发霉玉米示意</p>
+            <img src="images/发霉程度示意图.jpg" alt="发霉程度示意">
+        </div>
+        <div class="img-col">
+            <p style="text-align:center; margin-bottom:8px;">玉米胚芽脂肪端示意</p>
+            <img src="images/玉米组成部分.png" alt="玉米组成部分">
+        </div>
+    </div>
+
+    <div class="block">
+        <h3>行业痛点</h3>
+        <p>yx饲料厂在收购玉米原料时，需要判断玉米籽粒的霉变率来决定收购价格和是否收购。传统方式是收购员肉眼观察、牙咬判断，效率低、主观性强、无可追溯记录。</p>
+    </div>
+
+    <div class="block">
+        <h3>项目目标</h3>
+        <p>用深度学习自动检测玉米籽粒霉变，实现从拍照到出霉变率的全自动化，为饲料原料品控提供客观、可追溯的 AI 解决方案，以达到<strong>降低饲料厂的玉米原料丢弃率</strong>。</p>
+    </div>
+
+    <div class="block">
+        <h3>核心约束</h3>
+        <ul>
+            <li>需要在普通手机上实时推理（iOS / 鸿蒙），<strong>本项目以iPhone14Pro作为演示</strong>。</li>
+            <li>模型大小需控制在 5MB 以内</li>
+            <li>收购现场网络不稳定，必须离线运行</li>
         </ul>
-      </li>
-    </ul>
-  </div>
-
-  <!-- 右侧：APP界面图片 -->
-  <div style="flex-shrink: 0;">
-    <img src="images/app界面.jpg" width="150" alt="玉米霉变检测APP首页" style="border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-  </div>
-
-</div>
-
-| 发霉玉米示意 | 示意 |
-|:---|:---|
-| ![发霉程度示意](images/发霉程度示意图.jpg) | ![玉米组成部分](images/玉米组成部分.png) |
-
-<br>
-
-**行业痛点**：
-yx饲料厂在收购玉米原料时，需要判断玉米籽粒的霉变率来决定收购价格和是否收购。传统方式是收购员肉眼观察、牙咬判断，效率低、主观性强、无可追溯记录。
-
-**项目目标**：用深度学习自动检测玉米籽粒霉变，实现从拍照到出霉变率的全自动化，为饲料原料品控提供客观、可追溯的 AI 解决方案，以达到**降低饲料厂的玉米原料丢弃率**。
-
-**核心约束**：
-- 需要在普通手机上实时推理（iOS / 鸿蒙），**本项目以iPhone14Pro作为演示**。
-- 模型大小需控制在 5MB 以内
-- 收购现场网络不稳定，必须离线运行
-
-<br>
+    </div>
+</body>
+</html>
 
 ## 最终方案速览
 
