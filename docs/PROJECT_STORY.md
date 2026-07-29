@@ -1,151 +1,16 @@
-# 🌽 玉米霉变检测APP系统 — 项目版本演进全记录<br><br>
+# 🌽 玉米霉变检测APP系统 — 项目版本演进全记录
 
-> 从 Faster RCNN 到 YOLOv8，6 版本迭代的真实踩坑与优化之路<br>
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <!-- 移动端适配必须加 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>玉米霉变检测-项目背景</title>
-    <style>
-        /* 全局基础样式 */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            padding: 20px;
-            line-height: 1.8;
-        }
-        h2 {
-            margin-top: 0;
-            margin-bottom: 12px;
-        }
-        ul {
-            padding-left: 22px;
-            margin-bottom: 10px;
-        }
-        li {
-            margin-bottom: 10px;
-        }
-        strong {
-            font-weight: 600;
-        }
+> 从 Faster RCNN 到 YOLOv8，6 版本迭代的真实踩坑与优化之路
 
-        /* 顶部文字+APP 弹性布局 */
-        .top-wrap {
-            display: flex;
-            align-items: flex-start;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        .top-text {
-            flex: 1;
-        }
-        .top-img-box {
-            flex-shrink: 0;
-        }
-        .app-img {
-            width: 250px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
 
-        /* 霉变双图容器：两张图平分宽度，强制等大 */
-        .img-double-wrap {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .img-col {
-            flex: 1; /* 两列完全均分宽度 */
-        }
-        .img-col img {
-            width: 100%;
-            height: auto;
-            object-fit: contain; /* 不变形，完整显示图片 */
-            border-radius: 6px;
-            border: 1px solid #eee;
-        }
 
-        /* 行业痛点、约束通用间距 */
-        .block {
-            margin-bottom: 18px;
-        }
+| APP界面 | 成果示意 |
+|:---|:---|
+| ![app的界面](images/app界面.jpg) | ![测试成果1](images/测试成果1.jpg) |
+| ![测试成果](images/测试成果2.jpg) | ![测试成果](images/测试成果3.jpg) |
+| ![测试成果](images/测试成果4.jpg) | ![测试成果](images/测试成果5.jpg) |
 
-        /* 手机端适配：顶部左右布局改成上下 */
-        @media (max-width: 768px) {
-            .top-wrap {
-                flex-direction: column;
-            }
-            .top-img-box {
-                align-self: center;
-            }
-            .img-double-wrap {
-                flex-direction: column;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- 上半部分：左侧文字 + 右侧APP图片 -->
-    <div class="top-wrap">
-        <div class="top-text">
-            <h2>项目背景</h2>
-            <ul>
-                <li>
-                    此项目为本人从数据采集、模型训练、项目发布全程一人负责完成，项目始于2024年8月初完结于2024年10月。<strong>原项目为企业内部项目，涉及业务数据和代码，仓库仅保留可公开的复现版本，完整还原了实验流程、模型训练过程与部署方案。</strong>
-                </li>
-                <li>
-                    饲料加工员提的项目需求很简单：
-                    <ul>
-                        <li>视觉模型能区分出健康和发霉的玉米粒；</li>
-                        <li>收购玉米粒时，每次定量抽检，模型能算出发霉玉米粒和整体玉米粒的占比，从而决定收购的价格。要求轻度发霉不高于 <strong>7%</strong>，重度发霉不高于 <strong>2%</strong>，整体霉变率不高于 <strong>5%</strong>。</li>
-                        <li>发霉程度的定义：玉米粒可分胚芽端和脂肪端两部分，胚芽亲水，脂肪段憎水，霉变始于胚芽。只有 <strong>胚芽端发霉</strong> 的玉米定义为“轻度发霉”，<strong>脂肪端有发霉</strong> 迹象直接定义为“重度发霉”。</li>
-                        <li>加工流程简述：饲料机器会将发霉的玉米粒筛出，丢弃重度发霉玉米粒，并将轻度发霉的玉米粒的胚芽和脂肪剥离，只保留脂肪端。所以一粒轻度发霉的玉米粒损失了一半的重量。<strong>100粒</strong> 的玉米有 <strong>7粒轻度发霉</strong>，剥离胚芽只剩一半的重量就是 <strong>3.5粒</strong>，整个过程相当于丢弃了2粒重度发霉玉米和3.5粒的轻度发霉玉米，共丢弃发霉玉米了 <strong>5.5粒</strong>，<strong>整体霉变率5%</strong>就是这么来的。</li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-        <div class="top-img-box">
-            <img class="app-img" src="images/app界面.jpg" alt="玉米霉变检测APP首页">
-        </div>
-    </div>
 
-    <!-- 替换原来的表格：两张图等宽均分 -->
-    <div class="img-double-wrap">
-        <div class="img-col">
-            <p style="text-align:center; margin-bottom:8px;">发霉玉米示意</p>
-            <img src="images/发霉程度示意图.jpg" alt="发霉程度示意">
-        </div>
-        <div class="img-col">
-            <p style="text-align:center; margin-bottom:8px;">玉米胚芽脂肪端示意</p>
-            <img src="images/玉米组成部分.png" alt="玉米组成部分">
-        </div>
-    </div>
-
-    <div class="block">
-        <h3>行业痛点</h3>
-        <p>yx饲料厂在收购玉米原料时，需要判断玉米籽粒的霉变率来决定收购价格和是否收购。传统方式是收购员肉眼观察、牙咬判断，效率低、主观性强、无可追溯记录。</p>
-    </div>
-
-    <div class="block">
-        <h3>项目目标</h3>
-        <p>用深度学习自动检测玉米籽粒霉变，实现从拍照到出霉变率的全自动化，为饲料原料品控提供客观、可追溯的 AI 解决方案，以达到<strong>降低饲料厂的玉米原料丢弃率</strong>。</p>
-    </div>
-
-    <div class="block">
-        <h3>核心约束</h3>
-        <ul>
-            <li>需要在普通手机上实时推理（iOS / 鸿蒙），<strong>本项目以iPhone14Pro作为演示</strong>。</li>
-            <li>模型大小需控制在 5MB 以内</li>
-            <li>收购现场网络不稳定，必须离线运行</li>
-        </ul>
-    </div>
-</body>
-</html>
 
 ## 最终方案速览
 
@@ -158,15 +23,40 @@
 | v5 | YOLOv8 + 固定相机 | 2 | 0.902 | 硬件标准化采集 |
 | **v6** | **YOLOv8 + 量化部署** | **2** | **0.934** | **数据增强 + 空背景负样本，最终上线版** |
 
-<br><br>
 
-## 阶段一：Faster RCNN 探索期（v1–v2）<br><br>
+## 项目背景
 
-### v1 FasterRCNN baseline<br>
+- 此项目为本人从数据采集、模型训练、项目发布全程一人负责完成，项目始于2024年8月初完结与2024年10月，**原项目为企业内部项目，涉及业务数据和代码，仓库仅保留可公开的复现版本，完整还原了实验流程、模型训练过程与部署方案。**
+- 饲料加工员提的项目需求很简单：
+  * 视觉模型能区分出健康和发霉的玉米粒；
+  * 收购玉米粒时，每次定量抽检，模型能算出发霉玉米粒和整体玉米粒的占比，从而决定收购的价格。要求轻度发霉不高于**7%**，重度发霉不高于**2%**，整体霉变率不高于**5%**。
+  * 发霉程度的定义：玉米粒可分胚芽端和脂肪端两部分，胚芽亲水，脂肪段憎水，霉变始于胚芽。只有 **胚芽端发霉** 的玉米定义为“轻度发霉”，**脂肪端有发霉** 迹象直接定义为“重度发霉”。
+  * 加工流程简述：饲料机器会将发霉的玉米粒筛出，丢弃重度发霉玉米粒，并将轻度发霉的玉米粒的胚芽和脂肪剥离，只保留脂肪端。所以一粒轻度发霉的玉米粒损失了一半的重量。**100粒** 的玉米有**7粒轻度发霉**，剥离胚芽只剩一半的重量就是**3.5粒**，整个过程相当于丢弃了2粒重度发霉玉米和3.5粒的轻度发霉玉米，共丢弃发霉玉米了**5.5粒**，**整体霉变率5%**就是这么来的。
+| 发霉玉米示意 | 示意 |
+|:---|:---|
+| ![发霉程度示意](images/发霉程度示意图.jpg) | ![玉米组成部分](images/玉米组成部分.png) |
+
+
+
+**行业痛点**：
+yx饲料厂在收购玉米原料时，需要判断玉米籽粒的霉变率来决定收购价格和是否收购。传统方式是收购员肉眼观察、牙咬判断，效率低、主观性强、无可追溯记录。
+
+**项目目标**：用深度学习自动检测玉米籽粒霉变，实现从拍照到出霉变率的全自动化，为饲料原料品控提供客观、可追溯的 AI 解决方案，以达到**降低饲料厂的玉米原料丢弃率**。
+
+**核心约束**：
+- 需要在普通手机上实时推理（iOS / 鸿蒙），**本项目以iPhone14Pro作为演示**。
+- 模型大小需控制在 5MB 以内
+- 收购现场网络不稳定，必须离线运行
+
+
+
+## 阶段一：Faster RCNN 探索期（v1–v2）
+
+### v1 FasterRCNN baseline
 **实验思路**：
 - **数据的收集：**以往的收购员并没有系统的收集和拍摄过发霉的玉米粒，第一批的训练集图片都是在网上收集的。**最初的设想就是的把各种品种、各种霉菌的玉米图片全部收集，让模型学习霉变多样性特征**。
 
-| 部分训练图片示意 |
+| 部分训练 | 图片 | 示意 |
 |:---|:---|:---|
 | ![青霉](images/v1_production/青霉.jpg) | ![黄曲霉](images/v1_production/黄曲霉.jpg) | ![白霉](images/v1_production/白霉.jpg) |
 | ![红玉米发霉](images/v1_production/红玉米发霉.jpg) |  |  |
@@ -761,7 +651,7 @@ v2 验证了一个关键结论：**轻度霉变与健康玉米的视觉特征高
 **霉变率计算方案**：
 1. **预统计**：称 100g 玉米粒 → 统计粒数 → 重复 20 次 → 正态分布取均值 μ → 一斤玉米粒 ≈ 5μ 粒
 2. **预测时**：统计轻度霉变预测框中心点个数 x1、重度霉变 x2
-3. **霉变率** = (x1 + x2) / 5μ
+3. **霉变率** = (x1/2 + x2) / 5μ
 
 **分母固定**、**拍照固定** → 预测质量高度可控。
 
