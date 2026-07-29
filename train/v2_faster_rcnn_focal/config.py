@@ -20,7 +20,7 @@ SAVE_WEIGHT_DIR = os.path.join(cur_path, "save_weights")
 LOG_SAVE_PATH = cur_path  # results日志、曲线图片保存在v1_faster_rcnn根目录
 
 # ===================== 2. 训练超参配置 =====================
-# 数据集类别：不含背景，你玉米3分类
+# 数据集类别：3分类
 NUM_CLASSES = 3
 EPOCHS = 15
 BATCH_SIZE = 4

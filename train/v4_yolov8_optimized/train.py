@@ -10,7 +10,7 @@ cur_path = os.path.dirname(os.path.abspath(__file__))
 train_root = os.path.join(cur_path, "..")
 sys.path.append(train_root)
 
-DATA_YAML = os.path.join(train_root, "common_3cls", "data", "YOLO_data", "data.yaml")
+DATA_YAML = os.path.join(train_root, "common_2cls", "data", "YOLO_data", "data.yaml")
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 print(f"使用设备: {device}")
 print(f"数据路径: {DATA_YAML}")
