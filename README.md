@@ -79,10 +79,8 @@ CornMildewDetector/
 建议 Python 3.10+：
 
 ```bash
-pip install ultralytics torch torchvision opencv-python coremltools
+pip install -r train/requirements.txt
 ```
-
-（若后续补充了 `train/requirements.txt`，优先使用该文件。）
 
 ### 2. 数据挂载
 
