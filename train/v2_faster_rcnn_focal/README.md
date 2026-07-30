@@ -1,22 +1,50 @@
-### v2 为 v1 原版 Faster R-CNN（交叉熵 CE 损失）的改进版，核心改动：将 ROI 检测头多分类损失、RPN 前景背景二分类损失替换为 Focal Loss，解决玉米霉变检测任务中正负样本不均衡、难例样本识别差的问题。
-    v1：标准 Faster R-CNN + CrossEntropy / BCE 损失（基线版本）
-    v2：Faster R-CNN + FocalLoss（ROI 多分类）+ BinaryFocalLoss（RPN 二分类）（优化版本）
-两套版本代码物理隔离，公共原版代码无修改，实验基线互不污染。
+# v2：Faster R-CNN + Focal Loss
 
-v2_faster_rcnn_focal/
-├── config.py                # 全局路径、超参、Focal超参统一配置
-├── train.py                 # 训练入口（加载focal版RPN/ROI头）
-├── predict.py               # 单张图片推理可视化
-├── eval.py                  # 验证集批量评估：混淆矩阵 + Precision/Recall/F1指标
-├── requirements.txt         # 环境依赖
-├── frcnn_env.yml            # Conda环境导出配置
-├── save_weights/            # 训练权重自动保存目录
-├── eval_result_out/         # eval.py 输出：混淆矩阵图、指标txt
-└── test.jpg                 # 测试样例图
+在 v1 baseline 上引入 Focal Loss，并下调置信度阈值，尝试缓解类别不平衡与难样本问题。
 
-### 核心修改点（公共 common_3cls）
-    - 仅新增_focal后缀副本，原版文件完全不动：
-    - loss_focal.py：实现多分类 FocalLoss、二分类 BinaryFocalLoss
-    - roi_head_focal.py：替换 ROI 分类交叉熵为 FocalLoss
-    - rpn_function_focal.py：替换 RPN 前景背景 BCE 为 BinaryFocalLoss
-边框回归仍使用 SmoothL1，无改动
+## 版本定位
+
+| 项目 | 说明 |
+|------|------|
+| 模型 | Faster R-CNN + ResNet50-FPN |
+| 损失函数 | Cross Entropy → **Focal Loss**（γ=2, α=0.25） |
+| 类别 | 3 类（健康 / 轻度霉变 / 重度霉变） |
+| 置信度阈值 | 0.3 |
+| 数据集 | 与 v1 相同 |
+| mAP50 | **~0.263**（v1 为 ~0.242） |
+
+## 主要改动
+
+1. **Focal Loss**  
+   降低易分类样本（背景、健康）的损失权重，让模型更关注难分的轻度霉变。
+
+2. **置信度阈值下调至 0.3**  
+   减少因阈值过高导致的漏检。
+
+## 实验结果摘要
+
+| 指标 | v1 | v2 | 变化 |
+|------|----|----|------|
+| 整体 mAP50 | ~0.242 | **~0.263** | ↑ +0.021 |
+| 健康召回率 | 62.4% | **65.1%** | ↑ +2.7% |
+| 轻度霉变召回率 | 6.6% | **36.9%** | ↑ +30.3% |
+| 重度霉变召回率 | 55.9% | **65.8%** | ↑ +9.9% |
+
+轻度霉变提升最明显，但仍有约 63% 未被正确识别（大量被判为背景或健康）。
+
+## 核心结论
+
+1. Focal Loss 能缓解难样本问题，但**治标不治本**
+2. 轻度霉变与健康外观高度重叠，是数据与类别定义的结构性问题
+3. 仅靠改 Loss / 调阈值，无法建立清晰决策边界
+
+因此后续版本决定：
+
+- **去掉健康类别** → 简化为二分类（轻度 / 重度）
+- **统一拍照标准** → 降低输入噪声
+
+## 相关链接
+
+- 上一版：[`../v1_faster_rcnn_baseline`](../v1_faster_rcnn_baseline)
+- 下一版：[`../v3_yolov8_baseline`](../v3_yolov8_baseline)
+- 完整故事：[`docs/PROJECT_STORY.md`](../../docs/PROJECT_STORY.md)
