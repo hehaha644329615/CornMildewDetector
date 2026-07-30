@@ -1,4 +1,3 @@
-```markdown
 # v6 最终上线版
 
 YOLOv8n + 数据增强 + 空背景负样本 + INT8 量化，最终部署到 iOS App。
