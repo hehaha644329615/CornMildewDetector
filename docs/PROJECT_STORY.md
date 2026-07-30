@@ -452,7 +452,6 @@ v2 验证了一个关键结论：**轻度霉变与健康玉米的视觉特征高
 6. 训练 50 epoch，在验证集上评估
 
 
-
 **实验结果**：
 
 | 指标 | v4 | v5 | 变化 |
@@ -494,6 +493,12 @@ v2 验证了一个关键结论：**轻度霉变与健康玉米的视觉特征高
 | **PR 曲线** | mAP50 达到 0.920，PR 曲线下面积显著增大 |
 | **训练曲线** | 50 epoch 内各损失函数平滑下降，mAP50 从第 10 epoch 起快速攀升至 0.88 以上，收敛迅速 |
 
+| v5训练 | 指标 |
+|:---|:---|
+| ![Curves](images/v5_production/BoxPR_curve.png) | ![Matrix](images/v5_production/BoxF1_curve.png) | 
+| ![Curves](images/v5_production/BoxP_curve.png) | ![Matrix](images/v5_production/BoxR_curve.png) |
+| ![alt text](images/v5_production/confusion_matrix.png) | ![label](images/v5_production/labels.jpg) |
+| ![alt text](images/v5_production/results.png) |
 
 **问题分析**：
 
