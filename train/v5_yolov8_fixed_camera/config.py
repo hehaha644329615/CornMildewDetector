@@ -3,7 +3,7 @@ import os
 cur_path = os.path.dirname(os.path.abspath(__file__))
 TRAIN_ROOT = os.path.join(cur_path, "..")
 
-NUM_CLASSES = 3
+NUM_CLASSES = 2
 EPOCHS = 50
 IMG_SIZE = 640
 BATCH_SIZE = 16

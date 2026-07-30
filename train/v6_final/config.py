@@ -2,7 +2,7 @@
 import os
 cur_path = os.path.dirname(os.path.abspath(__file__))
 
-NUM_CLASSES = 3
+NUM_CLASSES = 2
 EPOCHS = 100
 IMG_SIZE = 640
 BATCH_SIZE = 16
