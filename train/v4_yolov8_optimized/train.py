@@ -1,5 +1,5 @@
 """
-v6 YOLOv8 优化训练
+v4 YOLOv8 优化训练
 """
 from ultralytics import YOLO
 import torch

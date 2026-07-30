@@ -5,7 +5,7 @@ from torchvision import transforms
 import sys
 
 # 当前脚本目录
-cur_path = os.path.dirname(os.path.abspath(__file__)) # /CornMildewDetector/train/v1_faster_rcnn
+cur_path = os.path.dirname(os.path.abspath(__file__)) # -> /CornMildewDetector/train/v2_faster_rcnn_focal
 train_root = os.path.join(cur_path, "..") # -> /CornMildewDetector/train
 # 把train加入系统路径，就能直接 import common_3cls
 sys.path.append(train_root) 
@@ -57,11 +57,7 @@ def main(args):
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
 
     # 用来保存coco_info的文件
-<<<<<<< HEAD
     results_file = "/home/wuyou/桌面/玉米检测项目/CornMildewDetector/train/v2_faster_rcnn_focal/results{}.txt".format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
-=======
-    results_file = "results{}.txt".format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
->>>>>>> 7143ce93a88dedcecd9b724d4ef697e2b9c09b76
 
     data_transform = {
         "train": transforms.Compose([transforms.ToTensor(),
@@ -191,11 +187,7 @@ def main(args):
             'epoch': epoch}
         if args.amp:
             save_files["scaler"] = scaler.state_dict()
-<<<<<<< HEAD
         torch.save(save_files, "/home/wuyou/桌面/玉米检测项目/CornMildewDetector/train/v2_faster_rcnn_focal/save_weights/resNetFpn-model-{}.pth".format(epoch))
-=======
-        torch.save(save_files, "./save_weights/resNetFpn-model-{}.pth".format(epoch))
->>>>>>> 7143ce93a88dedcecd9b724d4ef697e2b9c09b76
 
     # plot loss and lr curve
     if len(train_loss) != 0 and len(learning_rate) != 0:
