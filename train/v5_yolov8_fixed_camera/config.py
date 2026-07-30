@@ -1,4 +1,4 @@
-# v9 固定相机方案配置
+# v5 固定相机方案配置
 import os
 cur_path = os.path.dirname(os.path.abspath(__file__))
 TRAIN_ROOT = os.path.join(cur_path, "..")

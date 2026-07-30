@@ -1,4 +1,4 @@
-# v10 最终上线版配置
+# v6 最终上线版配置
 import os
 cur_path = os.path.dirname(os.path.abspath(__file__))
 
