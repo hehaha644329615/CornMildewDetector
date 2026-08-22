@@ -30,7 +30,7 @@ python export_onnx.py
 python quantize.py
 ```
 
-最终得到 **`best.mlpackage`** 或 **`best.mlmodel`**，体积约 **3.8 MB**。
+最终得到 **`best.mlpackage`** 或 **`best.mlmodel`**，体积约 **3.2 MB**。
 
 
 ## 2. iOS工程配置 (Xcode)

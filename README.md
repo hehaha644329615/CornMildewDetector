@@ -50,7 +50,17 @@
 | 模型大小 | **3.8 MB**（INT8 量化后） |
 | 漏检率 | < 5% |
 
+## 最新灵感更新
+
+| 最新训练 | 指标 |
+|:---|:---|
+| ![Curves](docs/images/final_production/BoxPR_curve.png) | ![Matrix](docs/images/final_production/BoxF1_curve.png) | 
+| ![Curves](docs/images/final_production/BoxP_curve.png) | ![Matrix](docs/images/final_production/BoxR_curve.png) |
+| ![alt text](docs/images/final_production/confusion_matrix.png) | ![label](docs/images/final_production/labels.jpg) |
+| ![alt text](docs/images/final_production/results.png) |
+
 ---
+复盘项目时，忽有灵感，把满盒子的健康玉米粒图片作为背景放入训练集，健康玉米粒作为新的“高相似度的负样本”，mAP提升到了**0.954**，比v6_final的0.934提升了**0.02**，若是轻度霉变玉米粒实物，还可采集满盒子的轻度霉变样本照片、满盒子重度霉变的样本照片、健康玉米中掺杂了轻度霉变的照片和健康玉米中掺杂了重度霉变的照片。mAP还能进一步提升。
 
 ## 📁 仓库结构
 
